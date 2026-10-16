@@ -1,0 +1,22 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: user-service
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${ai-doc.db-mysql.host}:3306/ai-doc
+    username: ${ai-doc.db-mysql.username}
+    password: ${ai-doc.db-mysql.password}
+  data:
+    redis:
+      database: ${ai-doc.db-redis.database}
+      host: ${ai-doc.db-redis.host}
+      port: ${ai-doc.db-redis.port}
+      password: ${ai-doc.db-redis.password}

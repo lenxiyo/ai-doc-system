@@ -1,0 +1,10 @@
+ai-doc:
+  db-mysql:
+    host: localhost
+    username: root
+    password: 1234
+  db-redis:
+    database: 0
+    host: localhost
+    password: 1234
+    port: 6379
