@@ -21,9 +21,11 @@
         <module>gateway</module>
         <module>user-service</module>
         <module>doc-service</module>
+        <module>common</module>
     </modules>
 
     <properties>
+        <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +37,28 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 注意：Spring Boot 的 starter、mysql 驱动这些【不要】在这里列！
+                 spring-boot-starter-parent 已经通过 spring-boot-dependencies 管好版本了。
+                 在这里再写一条"不带 version"的同坐标条目，自己的条目优先级高于
+                 import 进来的 BOM 和父 pom 的条目（与写在前还是在后无关），
+                 于是版本被"抹掉"成 null，子模块声明它时就报
+                 'dependencies.dependency.version' is missing。-->
+
+            <!--mybatis：不在 Spring Boot 的 BOM 里，所以这里显式管版本-->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter-test</artifactId>
+                <version>4.0.1</version>
+                <scope>test</scope>
+            </dependency>
+
+
+
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
@@ -75,17 +99,15 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--已经有springcloud官方BOM声明了，只需要在子版本处写就好了-->
+            <!-- 注意：不要在这个表里写"不带 version"的同坐标条目！不管是 Spring Boot 的还是 Spring Cloud 的。
+                 自己的条目优先级高于 import 进来的 BOM，一旦不写版本就会把 BOM 的版本"抹掉"，
+                 子模块声明它时就会报 'dependencies.dependency.version' ... is missing。
+                 下面这条 openfeign 的正确做法是直接删掉（BOM 已经管了），
+                 只有需要"改版本"或"加 exclusions"时才在这里写，而且那时要带上 version。-->
             <!--<dependency>-->
             <!--    <groupId>org.springframework.cloud</groupId>-->
-            <!--    <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>-->
+            <!--    <artifactId>spring-cloud-starter-openfeign</artifactId>-->
             <!--</dependency>-->
-
-            <!-- 可选：声明式远程调用 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-openfeign</artifactId>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

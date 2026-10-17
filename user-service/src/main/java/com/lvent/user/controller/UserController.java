@@ -1,8 +1,8 @@
 package com.lvent.user.controller;
 
-import com.lvent.user.common.Result;
+
+import com.lvent.common.Result;
 import com.lvent.user.model.dto.UserDTO;
-import com.lvent.user.model.vo.UserVO;
 import com.lvent.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

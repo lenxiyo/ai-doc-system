@@ -1,8 +1,7 @@
-package com.lvent.user.common;
+package com.lvent.common;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class Result<T> {
