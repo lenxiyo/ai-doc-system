@@ -22,7 +22,6 @@ public class DocController {
 
     // 如果需要Spring自动装配的类没有实现类那么自动装配时会找不到
     private final DocService docService;
-
     private final RabbitTemplate rabbitTemplate;
 
     @RequestMapping("/upload")
@@ -33,10 +32,8 @@ public class DocController {
         Integer upload = docService.upload(multipartFile);
         return upload == 1 ? Result.success() : Result.error();
 
-        // 文件上传
         // String originName = "zupload\\" + multipartFile.getOriginalFilename();
-        // multipartFile.transferTo(new File("E:\\Software\\Projects\\ai-doc-system\\"+originName));
-        // return Result.success();
+        // File file = new File("E:\\Software\\Projects\\ai-doc-system\\"+originName);
     }
 
     @PostMapping("/extract")
@@ -44,6 +41,7 @@ public class DocController {
         if (file.isEmpty()){
             throw new Exception("文件为空");
         }
+
         File text = new File("E:\\Software\\Projects\\ai-doc-system\\zpdf" + file.getOriginalFilename());
         file.transferTo(text);
         // PdfUtil.extractText(text);
