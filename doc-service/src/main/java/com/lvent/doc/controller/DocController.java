@@ -51,7 +51,7 @@ public class DocController {
 
     @GetMapping("/testRabbitMQ")
     public void testRabbitMQ(){
-        rabbitTemplate.convertAndSend("simple.queue","Hello RabbitMQ!");
+        rabbitTemplate.convertAndSend("simple.RabbitMQQueue","Hello RabbitMQ!");
     }
 
 }
