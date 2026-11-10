@@ -27,7 +27,8 @@ public class DocServiceImpl implements DocService {
         }
         // 文件上传并存储在  本地
         // 创建一个文件对象指向上传的文件所在位置和文件名
-        File file = new File("E:\\Software\\Projects\\ai-doc-system\\zupload\\" + multipartFile.getOriginalFilename());
+        String FILE_URL = "E:\\Software\\Projects\\ai-doc-system\\zupload\\";
+        File file = new File(FILE_URL + multipartFile.getOriginalFilename());
         // 将上传的文件对象正式写入到file对象中
         multipartFile.transferTo(file);
         // byte[] fileBytes = multipartFile.getBytes();
