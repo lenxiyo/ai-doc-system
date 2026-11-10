@@ -1,8 +1,12 @@
 package com.lvent.doc.controller;
 
 import com.lvent.common.Result;
+import com.lvent.doc.service.DocService;
 import com.lvent.doc.utils.PdfUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,18 +16,27 @@ import java.io.File;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/doc")
 public class DocController {
+
+    // 如果需要Spring自动装配的类没有实现类那么自动装配时会找不到
+    private final DocService docService;
+
+    private final RabbitTemplate rabbitTemplate;
 
     @RequestMapping("/upload")
     public Result upload(MultipartFile multipartFile) throws Exception {
         if (multipartFile.isEmpty()){
             throw new Exception("文件为空");
         }
-        String originName = "zupload\\" + multipartFile.getOriginalFilename();
+        Integer upload = docService.upload(multipartFile);
+        return upload == 1 ? Result.success() : Result.error();
 
-        multipartFile.transferTo(new File("E:\\Software\\Projects\\ai-doc-system\\"+originName));
-        return Result.success();
+        // 文件上传
+        // String originName = "zupload\\" + multipartFile.getOriginalFilename();
+        // multipartFile.transferTo(new File("E:\\Software\\Projects\\ai-doc-system\\"+originName));
+        // return Result.success();
     }
 
     @PostMapping("/extract")
@@ -36,6 +49,11 @@ public class DocController {
         // PdfUtil.extractText(text);
         PdfUtil.textSplitter(text);
         return Result.success();
+    }
+
+    @GetMapping("/testRabbitMQ")
+    public void testRabbitMQ(){
+        rabbitTemplate.convertAndSend("simple.queue","Hello RabbitMQ!");
     }
 
 }

@@ -6,6 +6,7 @@ import com.lvent.user.model.dto.UserDTO;
 import com.lvent.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -40,7 +41,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result login(String username,String password) throws Exception {
+    // @RequestParam用于？后面拼接的参数（URL）或者是表单格式的数据，对于json格式的数据，最好使用DTO接收
+    public Result login(@RequestParam("username") String username,@RequestParam("password") String password) throws Exception {
         if ("".equals(username)){
             log.error("username为空");
             throw new Exception("用户名不能为空");

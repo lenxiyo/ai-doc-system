@@ -43,4 +43,8 @@ public class Result<T> {
     public static <V> Result error(Integer code,String msg,V data){
         return new Result(code,msg,data);
     }
+
+    public static <V> Result error(){
+        return new Result(500,null,null);
+    }
  }
