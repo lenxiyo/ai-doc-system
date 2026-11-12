@@ -22,3 +22,9 @@ spring:
               uri: lb://doc-service
               predicates:
                 - Path=/doc/**
+
+
+lvent:
+  auth:
+    exclude-path:
+      - /user/login

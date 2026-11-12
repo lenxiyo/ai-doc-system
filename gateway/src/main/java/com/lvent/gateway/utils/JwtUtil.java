@@ -1,5 +1,6 @@
 package com.lvent.gateway.utils;
 
+import com.lvent.common.exception.UnAuthException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -51,12 +52,16 @@ public class JwtUtil {
     }
 
     public static Integer validateToken(String token){
+        if (token == null){
+            throw new UnAuthException("token为空，未登录");
+        }
+
         try {
             Claims claims = parseToken(token);
             return (Integer) claims.get("id");
         } catch (JwtException | IllegalArgumentException e) {
             // 令牌签名无效、格式错误或已过期
-            return -1;
+            throw new UnAuthException("令牌无效");
         }
     }
 }
