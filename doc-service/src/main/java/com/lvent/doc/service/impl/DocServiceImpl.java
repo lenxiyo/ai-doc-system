@@ -1,5 +1,8 @@
 package com.lvent.doc.service.impl;
 
+import com.lvent.common.utils.UserContext;
+import com.lvent.doc.mapper.DocMapper;
+import com.lvent.doc.model.po.DocPO;
 import com.lvent.doc.queue.RabbitQueue;
 import com.lvent.doc.service.DocService;
 import com.lvent.doc.utils.PdfUtil;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Slf4j
@@ -19,6 +23,8 @@ import java.util.Arrays;
 public class DocServiceImpl implements DocService {
 
     private final RabbitTemplate rabbitTemplate;
+
+    private final DocMapper docMapper;
 
     @Override
     public Integer upload(MultipartFile multipartFile) throws IOException{
@@ -52,6 +58,11 @@ public class DocServiceImpl implements DocService {
         File file = new File(path);
         String content = PdfUtil.extractText(file);
 
-
+        DocPO docPO = new DocPO();
+        docPO.setUserId(UserContext.getUser());
+        docPO.setCreateTime(LocalDateTime.now());
+        docPO.setFileName(file.getName());
+        docPO.setContent(content);
+        Integer rows = docMapper.save(docPO);
     }
 }

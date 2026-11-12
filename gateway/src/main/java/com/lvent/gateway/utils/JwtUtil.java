@@ -58,7 +58,8 @@ public class JwtUtil {
 
         try {
             Claims claims = parseToken(token);
-            return (Integer) claims.get("id");
+            // get方法后面可以跟一个类型，自动转换为需要的类型，防止报错，目前只知道claims的get方法有这个
+            return claims.get("id",Integer.class);
         } catch (JwtException | IllegalArgumentException e) {
             // 令牌签名无效、格式错误或已过期
             throw new UnAuthException("令牌无效");

@@ -24,10 +24,12 @@ spring:
     username: guest
     password: guest
     virtual-host: /
-
-
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
 
 
 file:
   upload:
     url: E:\Software\Projects\ai-doc-system\upload
+
