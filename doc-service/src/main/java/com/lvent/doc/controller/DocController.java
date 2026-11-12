@@ -37,13 +37,13 @@ public class DocController {
     }
 
     @PostMapping("/extract")
-    public Result extractText(MultipartFile file) throws Exception {
-        if (file.isEmpty()){
+    public Result extractText(MultipartFile multipartFile) throws Exception {
+        if (multipartFile.isEmpty()){
             throw new Exception("文件为空");
         }
 
-        File text = new File("E:\\Software\\Projects\\ai-doc-system\\zpdf" + file.getOriginalFilename());
-        file.transferTo(text);
+        File text = new File("E:\\Software\\Projects\\ai-doc-system\\zpdf" + multipartFile.getOriginalFilename());
+        multipartFile.transferTo(text);
         // PdfUtil.extractText(text);
         PdfUtil.textSplitter(text);
         return Result.success();

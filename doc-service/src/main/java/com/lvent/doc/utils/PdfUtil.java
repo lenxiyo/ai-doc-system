@@ -9,12 +9,13 @@ import java.io.IOException;
 
 public class PdfUtil {
 
-    public static void extractText(File file) throws IOException {
+    public static String extractText(File file) throws IOException {
         PDDocument pdDocument = Loader.loadPDF(file);
         PDFTextStripper stripper = new PDFTextStripper();
         String text = stripper.getText(pdDocument);
-        System.out.println(text);
+
         pdDocument.close();
+        return text;
     }
 
     public static void textSplitter(File file) throws IOException {
@@ -28,6 +29,7 @@ public class PdfUtil {
                 j = text.length();
             }
             String substring = text.substring(i, j);
+            // TODO 调试代码，后期丢掉
             System.out.println(substring);
             i = j;
         }
