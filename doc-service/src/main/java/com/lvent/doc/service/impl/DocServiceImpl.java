@@ -2,6 +2,7 @@ package com.lvent.doc.service.impl;
 
 import com.lvent.common.utils.UserContext;
 import com.lvent.doc.mapper.DocMapper;
+import com.lvent.doc.model.entity.UploadFileMessage;
 import com.lvent.doc.model.po.DocPO;
 import com.lvent.doc.queue.RabbitQueue;
 import com.lvent.doc.service.DocService;
@@ -46,23 +47,34 @@ public class DocServiceImpl implements DocService {
         // byte[] 会占用消息体大小。RabbitMQ 默认 frame_max 为 128KB 左右，大文件可能超限。如果文件较大，不建议直接塞进消息体。
         // 文件过大时：选择使用外部存储，发消息时只传递文件路径
         // rabbitTemplate.convertAndSend(queueName, multipartFile);
-        rabbitTemplate.convertAndSend(RabbitQueue.DOC_QUEUE.getQueueName(),file.getPath());
+        // MQ是异步开启一个线程去执行消费者的逻辑，两者的ThreadLocal并不互通，导致消费者拿不到用户信息
+        UploadFileMessage uploadFileMessage = new UploadFileMessage(UserContext.getUser(),file.getPath());
+        // MQ所使用的默认序列化器不能序列化对象，转为使用Jackson2JsonMessageConverter
+        rabbitTemplate.convertAndSend(RabbitQueue.DOC_QUEUE.getQueueName(),uploadFileMessage);
         return 1;
     }
 
     @RabbitListener(queues = "doc.queue")
-    public void extractText(String path) throws IOException{
-        if (path == null){
+    public Integer extractText(UploadFileMessage uploadFileMessage) throws IOException{
+        log.info("接收到{}中的消息:{}",RabbitQueue.DOC_QUEUE.getQueueName(),uploadFileMessage.toString());
+        if (uploadFileMessage.getFilePath() == null){
             throw new IOException();
         }
-        File file = new File(path);
+        File file = new File(uploadFileMessage.getFilePath());
         String content = PdfUtil.extractText(file);
-
+        log.info("文本解析完毕，准备存入数据库");
         DocPO docPO = new DocPO();
         docPO.setUserId(UserContext.getUser());
         docPO.setCreateTime(LocalDateTime.now());
         docPO.setFileName(file.getName());
         docPO.setContent(content);
         Integer rows = docMapper.save(docPO);
+        if (rows == 0){
+            // TODO 入库失败，觉得应该重试，等后期有实践再进行
+            log.error("入库失败");
+            return 0;
+        }
+        log.info("入库成功");
+        return 1;
     }
 }

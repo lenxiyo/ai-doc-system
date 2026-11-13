@@ -62,6 +62,9 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 .request(builder -> builder.header("userInfo",userInfo))
                 .build();
         return chain.filter(serverWebExchange);
+        // 网关在剥离/重写路径的同时，应将原始前缀写入标准头部 X-Forwarded-Prefix。
+        // 微服务拦截器可通过 request.getHeader("X-Forwarded-Prefix") 还原完整路径。
+        // 如果网关未自动添加，可在网关过滤器中手动补充。
     }
 
     private boolean isExclude(String path) {
