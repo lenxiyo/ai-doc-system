@@ -4,11 +4,15 @@ import com.lvent.common.utils.UserContext;
 import com.lvent.doc.mapper.DocMapper;
 import com.lvent.doc.model.entity.UploadFileMessage;
 import com.lvent.doc.model.po.DocPO;
-import com.lvent.doc.queue.RabbitQueue;
+import com.lvent.doc.rabbitEnum.queue.RabbitQueue;
 import com.lvent.doc.service.DocService;
 import com.lvent.doc.utils.PdfUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -76,13 +80,21 @@ public class DocServiceImpl implements DocService {
         return 1;
     }
 
-    @RabbitListener(queues = "simple.queue")
-    public void test1WorkQueue(String msg){
-        log.info("test1WorkQueue:{}",msg);
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue("topic.queue1"),
+            exchange = @Exchange(value = "topic.exchange",type = ExchangeTypes.TOPIC),
+            key = {"china.wheater","china.news"}
+    ))
+    public void test1Topic(String msg){
+        log.info("test1Topic,{}",msg);
     }
 
-    @RabbitListener(queues = "simple.queue")
-    public void test2WorkQueue(String msg){
-        log.error("test2WorkQueue:{}",msg);
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue("topic.queue2"),
+            exchange = @Exchange(value = "topic.exchange",type = ExchangeTypes.TOPIC),
+            key = "china.*"
+    ))
+    public void test2Topic(String msg){
+        log.info("test2Topic,{}",msg);
     }
 }

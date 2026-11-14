@@ -1,6 +1,8 @@
-package com.lvent.doc.queue;
+package com.lvent.doc.rabbitEnum.queue;
 
+import lombok.Getter;
 
+@Getter
 public enum RabbitQueue {
     /**
      * 默认使用的队列（测试队列）
@@ -16,9 +18,5 @@ public enum RabbitQueue {
 
     RabbitQueue(String queueName) {
         this.queueName = queueName;
-    }
-
-    public String getQueueName() {
-        return queueName;
     }
 }

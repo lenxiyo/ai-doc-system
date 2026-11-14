@@ -24,6 +24,32 @@ spring:
     username: guest
     password: guest
     virtual-host: /
+    # 生产者连接超时时间
+    connection-timeout: 1s
+    # 连接失败重试
+    template:
+      retry:
+        # 开启重试（如果对性能要求较为敏感建议关闭）
+        enabled: false
+        # 失败重试的初始等待时间
+        initial-interval: 1000ms
+        # 失败后的下次等待时长倍数
+        multiplier: 1
+        # 最大重试次数
+        max-retries: 3
+    # 设置生产者确认
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    # 控制消费者的消息预取值
+    listener:
+      simple:
+        prefetch: 5
+
+
+
+
+
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
