@@ -1,0 +1,4 @@
+# 配置日志控制台输出 二选一
+logging:
+  pattern:
+    console: "${CONSOLE_LOG_PATTERN}"

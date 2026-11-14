@@ -1,0 +1,46 @@
+<!-- logback日志输出格式配置 -->
+<configuration>
+    <!-- 引入CONSOLE_LOG_PATTERN -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 按服务名动态生成文件路径，默认值兜底防止属性缺失 -->
+    <springProperty scope="context" name="SERVER_NAME"
+                    source="spring.application.name" defaultValue="SERVER"/>
+    <!-- 设置文件路径 -->
+    <property name="LOG_PATH" value="E:/Software/Projects/ai-doc-system/log"/>
+    <property name="LOG_FILE" value="${LOG_PATH}/${SERVER_NAME}.log"/>
+
+    <!-- 输出日志到控制台 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 或者使用yaml配置文件的形式 -->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出日志到文件（按天滚动） -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${SERVER_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 单个日志文件大小 -->
+            <maxFileSize>50MB</maxFileSize>
+            <!-- 保留30天 -->
+            <!--<maxHistory>30</maxHistory>-->
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <!-- spring的default.xml中自带格式，不带颜色-->
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <!--<pattern>${CONSOLE_LOG_PATTERN}</pattern>-->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 如果yml文件中配置了日志级别，那么就算这里配置了也会被覆盖，SpringBoot对此有更高的优先级 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

@@ -13,10 +13,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -76,5 +74,15 @@ public class DocServiceImpl implements DocService {
         }
         log.info("入库成功");
         return 1;
+    }
+
+    @RabbitListener(queues = "simple.queue")
+    public void test1WorkQueue(String msg){
+        log.info("test1WorkQueue:{}",msg);
+    }
+
+    @RabbitListener(queues = "simple.queue")
+    public void test2WorkQueue(String msg){
+        log.error("test2WorkQueue:{}",msg);
     }
 }
